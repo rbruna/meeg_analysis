@@ -22,7 +22,7 @@ Code in this section allows for the detection of these *broekn channels*, and th
 
 You can find a complete guide to this code in the [wiki](../../wiki).
 
-### Preprocessing of the data (or s1)
+### Preprocessing of the EEG/MEG data (or s1)
 Preprocessing here is the procedure of detect and remove noise present in the data. This noise can present as broken channels, artifacts (biological or otherwise) or external noise.
 
 Code in this section allows for the identification of broken channels, artifacts or noisy independent components, and the generation of files containing only clean data.
