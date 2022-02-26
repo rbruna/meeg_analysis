@@ -27,7 +27,7 @@ Preprocessing here is the procedure of detect and remove noise present in the da
 
 Code in this section allows for the identification of broken channels, artifacts or noisy independent components, and the generation of files containing only clean data.
 
-You can find a complete guide to this code in the [wiki](../../wiki).
+You can find a complete guide to this code in the [wiki](../../wiki/Preprocessing-of-the-EEG-MEG-data-(s1)).
 
 ### Source reconstruction (or s2)
 Source reconstruction is the procedure to identify the origin of the electrphysiological activity recorded by the channels. It can be based on anatomical information of the participant or on a standard template head.
