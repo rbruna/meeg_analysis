@@ -22,7 +22,7 @@ function varargout = s6_selectICsAndTrials ( varargin )
 
 % Edit the above text to modify the response to help s6_selectICsAndTrials
 
-% Last Modified by GUIDE v2.5 14-May-2016 20:26:00
+% Last Modified by GUIDE v2.5 17-Mar-2022 19:12:06
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -97,22 +97,23 @@ guidata ( handles.ICsViewer, handles );
 show ( handles )
 
 
-function popupIC_Callback              ( hObject, eventdata, handles ), updateSingle ( handles )
-function popupTrial_Callback           ( hObject, eventdata, handles ), updateSingle ( handles )
+function popupIC_Callback               ( hObject, eventdata, handles ), updateSingle ( handles )
+function popupTrial_Callback            ( hObject, eventdata, handles ), updateSingle ( handles )
 
-function toggleTrialsOriginal_Callback ( hObject, eventdata, handles ), updateMulti ( handles )
-function toggleICsOriginal_Callback    ( hObject, eventdata, handles ), updateMulti ( handles )
-function toggleKalima_Callback         ( hObject, eventdata, handles ), updateMulti ( handles )
-function toggleOriginal_Callback       ( hObject, eventdata, handles ), updateMulti ( handles )
-function toggleEOG_Callback            ( hObject, eventdata, handles ), updateMulti ( handles )
-function toggleEKG_Callback            ( hObject, eventdata, handles ), updateMulti ( handles )
-function toggleEMG_Callback            ( hObject, eventdata, handles ), updateMulti ( handles )
-function uitoggleTF_ClickedCallback    ( hObject, eventdata, handles ), updateMulti ( handles )
+function toggleTrialsOriginal_Callback  ( hObject, eventdata, handles ), updateMulti ( handles )
+function toggleICsOriginal_Callback     ( hObject, eventdata, handles ), updateMulti ( handles )
+function toggleKalima_Callback          ( hObject, eventdata, handles ), updateMulti ( handles )
+function toggleOriginal_Callback        ( hObject, eventdata, handles ), updateMulti ( handles )
+function toggleEOG_Callback             ( hObject, eventdata, handles ), updateMulti ( handles )
+function toggleEKG_Callback             ( hObject, eventdata, handles ), updateMulti ( handles )
+function toggleEMG_Callback             ( hObject, eventdata, handles ), updateMulti ( handles )
+function uitoggleCursor_ClickedCallback ( hObject, eventdata, handles ), toggleCursor ( handles )
+function uitoggleTF_ClickedCallback     ( hObject, eventdata, handles ), updateMulti ( handles )
 
-function uibuttonSave_ClickedCallback  ( hObject, eventdata, handles ), savedata ( handles )
+function uibuttonSave_ClickedCallback   ( hObject, eventdata, handles ), savedata ( handles )
 
 
-function popupTrialType_Callback       ( hObject, eventdata, handles )
+function popupTrialType_Callback        ( hObject, eventdata, handles )
 
 % Gets the selected trial and its new type.
 trial     = get ( handles.popupTrial, 'Value' );
@@ -125,7 +126,7 @@ handles.current.trialtype ( trial ) = trialtype - 1;
 updateMulti ( handles )
 
 
-function popupICType_Callback          ( hObject, eventdata, handles )
+function popupICType_Callback           ( hObject, eventdata, handles )
 
 % Gets the selected IC and its new type.
 IC        = get ( handles.popupIC,    'Value' );
@@ -138,7 +139,7 @@ handles.current.comptype  ( IC    ) = ICtype - 1;
 updateMulti ( handles )
 
 
-function buttonTrialsReset_Callback    ( hObject, eventdata, handles )
+function buttonTrialsReset_Callback     ( hObject, eventdata, handles )
 
 % Asks for confirmation.
 if strcmp ( questdlg ( 'Are you sure?', 'Question', 'Yes', 'No', 'No' ), 'Yes' )
@@ -151,7 +152,7 @@ if strcmp ( questdlg ( 'Are you sure?', 'Question', 'Yes', 'No', 'No' ), 'Yes' )
 end
 
 
-function buttonICsReset_Callback       ( hObject, eventdata, handles )
+function buttonICsReset_Callback        ( hObject, eventdata, handles )
 
 % Asks for confirmation.
 if strcmp ( questdlg ( 'Are you sure?', 'Question', 'Yes', 'No', 'No' ), 'Yes' )
@@ -164,7 +165,7 @@ if strcmp ( questdlg ( 'Are you sure?', 'Question', 'Yes', 'No', 'No' ), 'Yes' )
 end
 
 
-function toggleICsGlobal_Callback      ( hObject, eventdata, handles )
+function toggleICsGlobal_Callback       ( hObject, eventdata, handles )
 values   = get ( get ( handles.axesIC,      'Children' ), 'YData' );
 if iscell ( values ), values = cell2mat ( values ); end
 maxvalue = 1.1 * max ( abs ( values (:) ) ) + realmin ( 'single' );
@@ -179,11 +180,11 @@ else
 end
 
 if get ( hObject, 'Value' ), set ( handles.axesIC,    'YLim', get ( handles.axesTrials, 'YLim' ) )
-else                         set ( handles.axesIC,    'YLim', [ minvalue maxvalue ] )
+else,                        set ( handles.axesIC,    'YLim', [ minvalue maxvalue ] )
 end
 
 
-function toggleTrialsGlobal_Callback   ( hObject, eventdata, handles )
+function toggleTrialsGlobal_Callback    ( hObject, eventdata, handles )
 values   = get ( get ( handles.axesTrial,   'Children' ), 'YData' );
 if iscell ( values ), values = cell2mat ( values ); end
 maxvalue = 1.1 * max ( abs ( values (:) ) ) + realmin ( 'single' );
@@ -198,11 +199,11 @@ else
 end
 
 if get ( hObject, 'Value' ), set ( handles.axesTrial, 'YLim', get ( handles.axesTrials, 'YLim' ) )
-else                         set ( handles.axesTrial, 'YLim', [ minvalue maxvalue ] )
+else,                        set ( handles.axesTrial, 'YLim', [ minvalue maxvalue ] )
 end
 
 
-function toggleMeanGlobal_Callback     ( hObject, eventdata, handles )
+function toggleMeanGlobal_Callback      ( hObject, eventdata, handles )
 values   = get ( get ( handles.axesMean,    'Children' ), 'YData' );
 if iscell ( values ), values = cell2mat ( values ); end
 maxvalue = 1.1 * max ( abs ( values (:) ) ) + realmin ( 'single' );
@@ -217,11 +218,11 @@ else
 end
 
 if get ( hObject, 'Value' ), set ( handles.axesMean,  'YLim', get ( handles.axesTrials, 'YLim' ) )
-else                         set ( handles.axesMean,  'YLim', [ minvalue maxvalue ] )
+else,                        set ( handles.axesMean,  'YLim', [ minvalue maxvalue ] )
 end
 
 
-function toggleResGlobal_Callback      ( hObject, eventdata, handles )
+function toggleResGlobal_Callback       ( hObject, eventdata, handles )
 values   = get ( get ( handles.axesRes, 'Children' ), 'YData' );
 if iscell ( values ), values = cell2mat ( values ); end
 maxvalue = 1.1 * max ( abs ( values (:) ) ) + realmin ( 'single' );
@@ -236,12 +237,12 @@ else
 end
 
 if get ( hObject, 'Value' ), set ( handles.axesRes,   'YLim', get ( handles.axesTrials, 'YLim' ) )
-else                         set ( handles.axesRes,   'YLim', [ minvalue maxvalue ] )
+else,                        set ( handles.axesRes,   'YLim', [ minvalue maxvalue ] )
 end
 
 
 
-function buttonPrev_Callback           ( hObject, eventdata, handles )
+function buttonPrev_Callback            ( hObject, eventdata, handles )
 if handles.data.current > 1
     handles.data.current = handles.data.current - 1;
 end
@@ -250,7 +251,7 @@ end
 show ( handles )
 
 
-function buttonNext_Callback           ( hObject, eventdata, handles )
+function buttonNext_Callback            ( hObject, eventdata, handles )
 if handles.data.current < numel ( handles.data.filename )
     handles.data.current = handles.data.current + 1;
 end
@@ -610,6 +611,12 @@ plot ( handles.axesMean,   yaxis, EMGdata,  physline   {:} )
 plot ( handles.axesMean,   yaxis, MEGorig,  origline   {:} )
 plot ( handles.axesMean,   yaxis, MEGclean, cleanline  {:} )
 
+% Makes the trials and components pickable.
+hits = findall ( handles.axesTrials, 'Type', 'Line' );
+set ( hits, 'ButtonDownFcn', @pick_trial );
+hits = findall ( handles.axesICs, 'Type', 'Line' );
+set ( hits, 'ButtonDownFcn', @pick_IC );
+
 
 % Plots the single IC and single trial data.
 updateSingle ( handles )
@@ -902,6 +909,70 @@ end
 drawnow
 
 
+function pick_trial ( hObject, eventdata, handles )
+
+% Gets the GUI data.
+handles = guidata ( hObject );
+
+
+% Lists the visible trials.
+trials  = find ( handles.current.trialtype == 0 );
+trials  = flipud ( trials (:) );
+
+% Finds the index of the current trial in the axes.
+tindex  = hObject == findall ( handles.axesTrials, 'Type', 'Line' );
+tindex  = trials ( tindex );
+
+
+% Sets the current trial.
+set ( handles.popupTrial, 'Value', tindex )
+
+% Updates the axes.
+updateSingle ( handles )
+
+
+
+function pick_IC ( hObject, eventdata, handles )
+
+% Gets the GUI data.
+handles = guidata ( hObject );
+
+
+% Lists the visible trials.
+comps   = find ( handles.current.comptype == 0 );
+comps   = flipud ( comps (:) );
+
+% Finds the index of the current trial in the axes.
+cindex  = hObject == findall ( handles.axesICs, 'Type', 'Line' );
+cindex  = comps ( cindex );
+
+
+% Sets the current trial.
+set ( handles.popupIC, 'Value', cindex )
+
+% Updates the axes.
+updateSingle ( handles )
+
+
+function cursor = get_cursor ( hObject, check )
+
+% Gets the mouse position respect to the main axes.
+cursor = get ( hObject, 'CurrentPoint' );
+cursor = cursor ( 1, 1: 2 );
+
+% Checks if the cursor is inside the main axes, if requested.
+if nargin > 1 && check
+    
+    % Gets the definition of the area currently shown in the main axes.
+    axarea = axis ( hObject );
+    
+    % If the cursor is outside of the main axis, sets it to NaN.
+    if any ( cursor < axarea ( [ 1 3 ] ) ) || any ( cursor > axarea ( [ 2 4 ] ) )
+        cursor = nan ( 1, 2 );
+    end
+end
+
+
 function popupTrial_KeyPressFcn ( hObject, eventdata, handles )
 
 % Gets the pressed key.
@@ -961,4 +1032,3 @@ end
 
 
 function s6_selectICsAndTrials_OutputFcn ( hObject, eventdata, handles )
-
