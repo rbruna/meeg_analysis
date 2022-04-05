@@ -7,7 +7,7 @@ config.path.out  = '../../data/segments/';
 config.path.patt = '*.mat';
 
 % Sets the action when the task have already been processed.
-config.overwrite = true;
+config.overwrite = false;
 
 
 % Adds the functions folders to the path.
