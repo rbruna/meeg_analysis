@@ -8,7 +8,7 @@ config.path.segs        = '../../data/segments_split/';
 config.path.patt        = '*.mat';
 
 % Sets the action when the task have already been processed.
-config.overwrite        = true;
+config.overwrite        = false;
 
 % Sets the component removal configuration parameters.
 config.deEOG.perform    = true;
