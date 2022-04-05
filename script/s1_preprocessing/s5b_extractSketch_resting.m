@@ -8,7 +8,7 @@ config.path.sketch    = '../../data/sketch/';
 config.path.patt      = '*.mat';
 
 % Action when the task have already been processed.
-config.overwrite      = true;
+config.overwrite      = false;
 
 
 % Sets the segmentation options.
