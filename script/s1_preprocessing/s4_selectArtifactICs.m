@@ -169,6 +169,11 @@ for sindex = 1: numel ( files )
         artifacts   { findex } = artifact;
     end
     
+    if all ( cellfun ( @isempty, trialdatas ) )
+        fprintf ( 1, '  No data. Ignoring.\n' );
+        continue
+    end
+    
     fprintf ( 1, '  Merging all the data files.\n' );
     
     % Merges the epoch data.
