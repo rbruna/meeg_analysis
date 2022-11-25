@@ -1627,9 +1627,16 @@ eventtime  = eventtime / opt.fsample;
 eventtype  = { event.type }';
 eventvalue = { event.value }';
 
-
-% Transforms the values to strings.
+% Transforms the values into strings.
 eventvalue = cellfun ( @num2str, eventvalue, 'UniformOutput', false );
+
+
+% Adds the description, if any.
+if isfield ( event, 'description' )
+    eventdesc  = { event.description }';
+    eventvalue = strcat ( eventvalue, { newline }, eventdesc );
+end
+
 
 % Creates the label for each event.
 switch cfg.ploteventlabels
@@ -1668,7 +1675,7 @@ for eindex = 1: numel ( event )
     conctimes ( timeindex, 2 ) = conctimes ( timeindex, 2 ) + 1;
     
     % Writes the label.
-    text ( double ( eventtime ( eindex ) ), 1 - double ( voffset ), eventlabel { eindex }, 'Parent', ha, 'Tag', 'event', 'Color', eventcolor ( eindex, : ), 'Horizontalalignment', 'left', 'VerticalAlignment', 'top', 'FontUnits', cfg.fontunits, 'FontSize', cfg.fontsize, 'Visible', 'off' );
+    text ( double ( eventtime ( eindex ) ), 1 - double ( voffset ), eventlabel { eindex }, 'Parent', ha, 'Tag', 'event', 'Color', eventcolor ( eindex, : ), 'Horizontalalignment', 'left', 'VerticalAlignment', 'top', 'FontUnits', cfg.fontunits, 'FontSize', cfg.fontsize, 'Interpreter', 'none', 'Visible', 'off' );
     
     % Stores the event information in the cursor data.
     cursordata.type       = 'event';
