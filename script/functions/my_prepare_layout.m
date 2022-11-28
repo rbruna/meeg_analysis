@@ -7,9 +7,9 @@ if ~ft_senstype ( data, 'neuromag' )
     cfg    = [];
     
     % Determines the appropriate layout from the data.
-    switch ft_senstype ( data )
+    switch ft_senstype ( data.label )
         case { 'eeg1020' 'eeg1010' 'eeg1005' }
-            cfg.layout = upper ( ft_senstype ( data ) );
+            cfg.layout = upper ( ft_senstype ( data.label ) );
         case { 'ext1020' }
             cfg.layout = 'EEG1010';
         otherwise
