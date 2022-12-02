@@ -172,9 +172,10 @@ if isfield ( info, 'ref_label' ) && isfield ( info, 'ref_index' )
     % Fills the channel data with zeros.
     data ( info.ref_index, : ) = 0;
     
-    % Changes the index to the channels to add the new one.
-    % Be careful here...
-    channel = cat ( 2, channel ( 1: info.ref_index - 1 ), info.ref_index, channel ( info.ref_index: end ) + 1 );
+    % This is not needed; the header contains the reference channel.
+%     % Changes the index to the channels to add the new one.
+%     % Be careful here...
+%     channel = cat ( 2, channel ( 1: info.ref_index - 1 ), info.ref_index, channel ( info.ref_index: end ) + 1 );
 end
 
 
