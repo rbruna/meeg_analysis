@@ -1998,8 +1998,8 @@ end
 
 % Sets the global color limits, if requested.
 if strcmp ( cfg.compscale, 'global' )
-    zmin = nanmin ( zmin );
-    zmax = nanmax ( zmax );
+    zmin (:) = nanmin ( zmin );
+    zmax (:) = nanmax ( zmax );
 end
 
 
