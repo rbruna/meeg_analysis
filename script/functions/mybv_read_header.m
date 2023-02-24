@@ -100,7 +100,7 @@ for lindex = 1: lines
     if strcmpi ( slabel, 'Channel Infos' )
         
         % Interprets the line.
-        ctext = regexp ( ltext, '^Ch[0-9]+=([^,]+),([^,]*),([0-9\.]+)(?,([^,]+))?', 'tokens' );
+        ctext = regexp ( ltext, '^Ch[0-9]+=([^,]+),([^,]*),([0-9\.]*)(?,([^,]+))?', 'tokens' );
         
         if isempty ( ctext )
             warning ( 'Ignoring incomplete/erroneous channel.' )
@@ -210,6 +210,7 @@ end
 
 % Gets the path to the data file (eeg file).
 filepath = fileparts ( filename );
+if ( isempty ( filepath ) ), filepath = '.'; end
 datafile = sprintf ( '%s/%s', filepath, info.DataFile );
 
 % For binary files.
