@@ -124,5 +124,5 @@ fclose ( fid );
 % Rewrites the events as a structure.
 events = cat ( 1, events {:} );
 
-% Only the stimulus and responses are returned here.
-events = events ( ismember ( { events.type }, { 'Stimulus' 'Response' } ) );
+% % Only the stimulus and responses are returned here.
+% events = events ( ismember ( { events.type }, { 'Stimulus' 'Response' } ) );
