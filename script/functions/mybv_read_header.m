@@ -114,6 +114,11 @@ for lindex = 1: lines
         chan.resolution = str2double ( ctext {1} {3} );
         chan.units      = ctext {1} {4};
         
+        % If no resolution defined, sets it to 1.
+        if ~isfinite ( chan.resolution )
+            chan.resolution = 1;
+        end
+        
         % Fills the units with the standard.
         if isempty ( chan.units )
             chan.units      = 'uV';
