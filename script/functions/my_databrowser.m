@@ -221,8 +221,20 @@ if hasdata
     % Checks that the data is valid.
     data = ft_checkdata ( data, 'datatype', {'raw+comp', 'raw'}, 'feedback', 'no', 'hassampleinfo', 'yes' );
     
-    % Gets the header from the data.
-    hdr  = ft_fetch_header ( data );
+%     % Gets the header from the data.
+%     hdr  = ft_fetch_header ( data );
+    
+    % Creates the header from the data.
+    hdr        = [];
+    hdr.label  = data.label;
+    hdr.Fs     = data.fsample;
+    hdr.nChans = numel ( hdr.label );
+    if isfield ( hdr, 'grad' )
+        hdr.grad   = data.grad;
+    end
+    if isfield ( hdr, 'elec' )
+        hdr.elec   = data.elec;
+    end
 else
     
     % Checks that the options are valid.
