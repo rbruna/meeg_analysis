@@ -5,16 +5,20 @@ if ft_filetype ( filename, 'neuromag_fif' )
     header = myfiff_read_header ( filename );
     
     % Tries to get the sensors information.
-    [ grad, elec ]     = myft_mne2grad ( header.orig, false, [] );
+%     [ grad, elec ]     = myft_mne2grad ( header.orig, false, [] );
+    [ grad, elec ]     = myfiff_read_sens ( [], header );
+    
     if ~isempty ( grad )
         
         % Converts the gradiometer definition to meters.
         grad               = ft_convert_units ( grad, 'm' );
         
-        % Adds the channel units.
-        grad.chanunit      = repmat ( { 'unknown' }, size ( grad.chantype ) );
-        grad.chanunit ( strcmp ( grad.chantype, 'megmag' ) ) = { 'T' };
-        grad.chanunit ( strcmp ( grad.chantype, 'megplanar' ) ) = { 'T/m' };
+        % Adds the channel units, if required.
+        if ~isfield ( grad, 'chanunit' )
+            grad.chanunit      = repmat ( { 'unknown' }, size ( grad.chantype ) );
+            grad.chanunit ( strcmp ( grad.chantype, 'megmag' ) ) = { 'T' };
+            grad.chanunit ( strcmp ( grad.chantype, 'megplanar' ) ) = { 'T/m' };
+        end
         
         header.grad        = grad;
     end
