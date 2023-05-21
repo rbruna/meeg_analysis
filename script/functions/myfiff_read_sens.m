@@ -61,9 +61,9 @@ else
     
     % Defines the channel types and units.
     chantypes          = [];
-    chantypes.fifftype = [           2        3012        3013        3014        3022        3023        3024        7001 ];
-    chantypes.chantype = { 'megplanar' 'megplanar' 'megplanar' 'megplanar'    'megmag'    'megmag'    'megmag'  'megaxial' };
-    chantypes.chanunit = {       'T/m'       'T/m'       'T/m'       'T/m'         'T'         'T'         'T'       'T/m' };
+    chantypes.fifftype = [           2        3012        3013        3014        3022        3023        3024        6001        7001 ];
+    chantypes.chantype = { 'megplanar' 'megplanar' 'megplanar' 'megplanar'    'megmag'    'megmag'    'megmag'  'megaxial'  'megaxial' };
+    chantypes.chanunit = {       'T/m'       'T/m'       'T/m'       'T/m'         'T'         'T'         'T'         'T'       'T/m' };
     
     % Goes through each channel.
     for cindex = 1: numel ( megchan )
@@ -75,6 +75,12 @@ else
         chanrot   = chan.coil_trans ( 1: 3, 1: 3 );
         chantype  = chantypes.chantype ( chantypes.fifftype == chan.coil_type );
         chanunit  = chantypes.chanunit ( chantypes.fifftype == chan.coil_type );
+        
+        % Ignores the channel if the coil type is not known.
+        if ~any ( chan.coil_type == cat ( 2, coildef.id ) )
+            continue
+        end
+        
         
         % Gets the current coil definition.
         coil      = coildef ( chan.coil_type == cat ( 2, coildef.id ) );
