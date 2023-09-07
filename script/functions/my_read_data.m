@@ -71,6 +71,9 @@ elseif ft_filetype ( dataset, 'ns_cnt' )
 elseif ft_filetype ( dataset, 'brainvision_vhdr' ) || ft_filetype ( dataset, 'brainvision_eeg' )
     rawdata         = mybv_read_data ( dataset, header, begsample, endsample, channel );
     
+elseif ft_filetype ( dataset, 'biosemi_bdf' )
+    rawdata         = mybdf_read_data ( dataset, header, begsample, endsample, channel );
+    
 else
     
     % Rellies on FieldTrip to get the data.

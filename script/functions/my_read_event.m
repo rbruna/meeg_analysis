@@ -18,6 +18,10 @@ elseif ft_filetype ( filename, 'ns_cnt' )
 elseif ft_filetype ( filename, 'brainvision_vhdr' ) || ft_filetype ( filename, 'brainvision_eeg' )
     event  = mybv_read_event ( filename, header );
     
+elseif ft_filetype ( filename, 'biosemi_bdf' )
+    event  = [];
+    return
+    
 % If no specific function relies on FieldTrip.
 else
     event  = ft_read_event ( filename );

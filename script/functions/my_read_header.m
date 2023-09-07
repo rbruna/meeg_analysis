@@ -36,6 +36,9 @@ elseif ft_filetype ( filename, 'ns_cnt' )
 elseif ft_filetype ( filename, 'brainvision_vhdr' ) || ft_filetype ( filename, 'brainvision_eeg' )
     header = mybv_read_header ( filename );
     
+elseif ft_filetype ( filename, 'biosemi_bdf' )
+    header = mybdf_read_header ( filename );
+    
 % If no specific function relies on FieldTrip.
 else
     header = ft_read_header ( filename );
