@@ -156,7 +156,7 @@ if EDF.nrecord == -1
     warning ( 'Estimating the data length from the file size.' )
     
     % Opens the file to read.
-    fid = fopen ( filename, 'rb', 'ieee-le' );
+    fid   = fopen ( filename, 'rb', 'ieee-le' );
     
     % Goes to the end of the file.
     fseek ( fid , 0, 'eof');
@@ -165,8 +165,17 @@ if EDF.nrecord == -1
     % Closes the file.
     fclose ( fid );
     
-    % Gets the length of the data.
-    EDF.nrecord = floor ( ( endpos - EDF.hdrlen ) / ( sum ( [ EDF.channels.samples ] ) * 2 ) );
+    
+    % Gets the total data and epoch sizes.
+    dsize  = endpos - EDF.hdrlen;
+    esize  = sum ( [ EDF.channels.samples ] ) * 2;
+    
+    if ( dsize / esize ) ~= floor ( dsize / esize )
+        warning ( 'The total data is not an integer number of epochs. The file might be broken.' )
+    end
+    
+    % Gets the number of epochs.
+    EDF.nrecord = floor ( dsize / esize );
 end
 
 
