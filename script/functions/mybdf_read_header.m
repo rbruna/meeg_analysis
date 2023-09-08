@@ -29,6 +29,9 @@ if ~strcmp ( EDF.version ( 2: end ), 'BIOSEMI' )
     error ( 'This is not a BDF file.' )
 end
 
+% Removes the trailing 255 character.
+EDF.version (1) = [];
+
 
 % Reads the recording identifiers.
 EDF.patient   = fread ( fid , [ 80  1 ], '*char' )';
@@ -81,27 +84,45 @@ chunit    = num2cell ( chunit, 2 );
 chfilter  = num2cell ( chfilter, 2 );
 chextra   = num2cell ( chextra, 2 );
 
-% Covnerts the numeric values.
+% Trims the strings.
+chlabel   = strtrim ( chlabel );
+chtype    = strtrim ( chtype );
+chunit    = strtrim ( chunit );
+chfilter  = strtrim ( chfilter );
+chextra   = strtrim ( chextra );
+
+
+% Converts the numeric values.
 chphysmin = str2num ( chphysmin ); %#ok<ST2NM>
 chphysmax = str2num ( chphysmax ); %#ok<ST2NM>
 chdigmin  = str2num ( chdigmin ); %#ok<ST2NM>
 chdigmax  = str2num ( chdigmax ); %#ok<ST2NM>
 chsamples = str2num ( chsamples ); %#ok<ST2NM>
 
-% Trims the strings.
-chlabel   = cellfun ( @strtrim, chlabel,  'UniformOutput', false );
-chtype    = cellfun ( @strtrim, chtype,   'UniformOutput', false );
-chunit    = cellfun ( @strtrim, chunit,   'UniformOutput', false );
-chfilter  = cellfun ( @strtrim, chfilter, 'UniformOutput', false );
-chextra   = cellfun ( @strtrim, chextra,  'UniformOutput', false );
+% Defines the per-channel sample rate.
+chsrate   = chsamples / EDF.duration;
 
+% Checks that all the channels have the same sampling rate.
+if any ( chsrate ~= chsrate (1) )
+    error ( 'This code cannot handle files with different sampling rate per channel.' );
+end
+
+
+% Checks the consistency of the calibration data.
+if any ( chdigmin >= chdigmax )
+    warning ( 'Digital minimum larger than digital maximum.\n' );
+end
+if any ( chphysmin >= chphysmax )
+    warning ( 'Digital minimum larger than digital maximum.\n' );
+    
+    % Uses the digital values.
+    chphysmin = chdigmin;
+    chphysmax = chdigmax;
+end
 
 % Defines the per-channel calibration and offset.
 chcalib   = ( chphysmax - chphysmin ) ./ ( chdigmax - chdigmin );
 choffset  = chphysmin - chcalib .* chdigmin;
-
-% Defines the per-channel sample rate.
-chsrate   = chsamples / EDF.duration;
 
 
 % Converts the units to SI units, if required.
@@ -146,25 +167,6 @@ if EDF.nrecord == -1
     
     % Gets the length of the data.
     EDF.nrecord = floor ( ( endpos - EDF.hdrlen ) / ( sum ( [ EDF.channels.samples ] ) * 2 ) );
-end
-
-
-% Checks that all the channels have the same sampling rate.
-if any ( [ EDF.channels.samples ] ~= EDF.channels (1).samples )
-    error ( 'This code cannot handle files with different sampling rate per channel.' );
-end
-
-
-% Checks the consistency of the data.
-if any ( [ EDF.channels.digmin ] >= [ EDF.channels.digmax ] )
-    warning ( 'Digital minimum larger than digital maximum.\n' );
-end
-if any ( [ EDF.channels.physmin ] >= [ EDF.channels.physmax ] )
-    warning ( 'Digital minimum larger than digital maximum.\n' );
-    
-    % Uses the digital values.
-    [ EDF.channels.physmin ] = my_deal ( [ EDF.channels.digmin ] );
-    [ EDF.channels.physmax ] = my_deal ( [ EDF.channels.digmax ] );
 end
 
 
