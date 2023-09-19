@@ -168,7 +168,7 @@ if EDF.nrecord == -1
     
     % Gets the total data and epoch sizes.
     dsize  = endpos - EDF.hdrlen;
-    esize  = sum ( [ EDF.channels.samples ] ) * 2;
+    esize  = sum ( [ EDF.channels.samples ] ) * 3;
     
     if ( dsize / esize ) ~= floor ( dsize / esize )
         warning ( 'The total data is not an integer number of epochs. The file might be broken.' )
