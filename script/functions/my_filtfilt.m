@@ -39,7 +39,7 @@ end
 % elseif ~isscalar ( den )
 %     
 %     warning ( 'Passing the data and the IIR filter to ''filtfilt''.' );
-%     data = filtfilt ( den, num, data );
+%     data = filtfilt ( num, den, data );
 %     return
 % end
 
