@@ -2,7 +2,7 @@ clc
 clear
 close all
 
-infile   = '../../meta/eeg/times_';
+infile   = '../../meta/eeg/times';
 outfile  = '../../meta/eeg/times.mat';
 
 
