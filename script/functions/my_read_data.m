@@ -68,6 +68,10 @@ elseif ft_filetype ( dataset, 'egi_mff' )
 elseif ft_filetype ( dataset, 'ns_cnt' )
     rawdata         = mycnt_read_data ( dataset, 'sbeg', begsample, 'seng', endsample, 'channel', channel );
     
+elseif ft_filetype ( dataset, 'eep_cnt' )
+    rawdata         = myeep_read_cnt ( dataset, header );
+    rawdata         = rawdata ( channel, begsample: endsample );
+    
 elseif ft_filetype ( dataset, 'brainvision_vhdr' ) || ft_filetype ( dataset, 'brainvision_eeg' )
     rawdata         = mybv_read_data ( dataset, header, begsample, endsample, channel );
     

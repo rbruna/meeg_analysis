@@ -33,6 +33,9 @@ elseif ft_filetype ( filename, 'egi_mff' )
 elseif ft_filetype ( filename, 'ns_cnt' )
     header = mycnt_read_header ( filename );
     
+elseif ft_filetype ( filename, 'eep_cnt' )
+    header = myeep_read_header ( filename );
+    
 elseif ft_filetype ( filename, 'brainvision_vhdr' ) || ft_filetype ( filename, 'brainvision_eeg' )
     header = mybv_read_header ( filename );
     

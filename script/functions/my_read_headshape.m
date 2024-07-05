@@ -12,6 +12,12 @@ if ft_filetype ( filename, 'ns_cnt' )
     return
 end
 
+% ANT CNT-EEP file format includes no headshape information.
+if ft_filetype ( filename, 'eep_cnt' )
+    headshape = [];
+    return
+end
+
 
 % If FIFF file, reads the head shape.
 if ft_filetype ( filename, 'neuromag_fif' )

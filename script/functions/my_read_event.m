@@ -15,6 +15,9 @@ elseif ft_filetype ( filename, 'egi_mff' )
 elseif ft_filetype ( filename, 'ns_cnt' )
     event  = mycnt_read_event ( filename, 'header', header );
     
+elseif ft_filetype ( filename, 'eep_cnt' )
+    event  = myeep_read_event ( filename, header );
+    
 elseif ft_filetype ( filename, 'brainvision_vhdr' ) || ft_filetype ( filename, 'brainvision_eeg' )
     event  = mybv_read_event ( filename, header );
     
