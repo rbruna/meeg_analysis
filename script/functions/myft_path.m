@@ -1,14 +1,16 @@
 function myft_path
 
-% Search for a version of FiedlTrip in the path.
-if ~isempty ( which ( 'ft_defaults' ) ), return, end
-
 % Looks for FieldTrip in the parent folder.
 ft_path = dir ( sprintf ( '%s/fieldtrip*', fileparts ( pwd ) ) );
 ft_path = ft_path ( [ ft_path.isdir ] );
 
+% Search for a version of FiedlTrip in the path.
+if ~isempty ( which ( 'ft_defaults' ) )
+    
+    % Does nothing.
+    
 % Adds, if any version, FieldTrip to the path.
-if numel ( ft_path )
+elseif numel ( ft_path )
     addpath ( sprintf ( '%s/%s/', fileparts ( pwd ), ft_path ( end ).name ) )
     
 % Otherwise exits with an error.
