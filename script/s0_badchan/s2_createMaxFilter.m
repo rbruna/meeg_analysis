@@ -30,7 +30,8 @@ for findex = 1: numel ( files )
     fileinfo.file    = filename;
     
     % Identifies the subject name.
-    fileinfo.subject = strtok ( fileinfo.file, '_' );
+    %fileinfo.subject = strtok ( fileinfo.file, '_' );
+    fileinfo.subject = fileinfo.file;
     
     % Stores the information.
     fileinfos { findex } = fileinfo;
