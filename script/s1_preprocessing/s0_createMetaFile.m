@@ -3,7 +3,7 @@ clear
 close all
 
 infile   = '../../meta/eeg/times';
-outfile  = '../../meta/eeg/times.ma';
+outfile  = '../../meta/eeg/times.mat';
 
 
 % Reads the file content.
