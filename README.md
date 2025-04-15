@@ -9,7 +9,7 @@ Scripts for M/EEG preprocessing, source reconstruction, and analysis
 
 This repository contains the scripts developed (and, some times, compiled) in the [Laboratory of Cognitive and Computational Neuroscience](https://meg.ucm.es) in Madrid for the analysis of MEG and EEG data. Code based on others' is (or should be) referenced at the beginning of the code, and is (or should be) always based on Open Source code [^opensource].
 
-[^opensource]: Althought not explicitely indicated in each code file, all code present here is open source, publised under the GNU GPL v.3 license.
+[^opensource]: Althought not explicitely indicated in each code file, all new code present here is open source, publised under the GNU GPL v.3 license.
 
 The repository is divided in sections (namely folders starting by the letter "s"), and each sesion is divided in steps (namely scripts starting by the letter "s". It is confussing, I know).
 
@@ -18,7 +18,7 @@ The sections included are:
 ### Pre-Maxilter *bad channel* detection (or s0)
 MaxFilter (really tSSS) is a spatial filter developed by Neuromag and part of MEGIN (previously Neuromag or Elekta) MEG systems. As a spatial filter, is extremely sensitive to *broken channels* (i.e., channels containing false data, generally introduced by faulty electronics or broken sensors).
 
-Code in this section allows for the detection of these *broekn channels*, and the creation of batch scripts to apply MaxFilter to the data.
+Code in this section allows for the detection of these *broken channels*, and the creation of batch scripts to apply MaxFilter to the data.
 
 You can find a complete guide to this code in the [wiki](../../wiki).
 
