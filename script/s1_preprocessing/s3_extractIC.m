@@ -7,7 +7,7 @@ config.path.trl       = '../../meta/trl/';
 config.path.patt      = '*.mat';
 
 % Action when the task have already been processed.
-config.overwrite      = false;
+config.overwrite      = true;
 
 % Sets the segmentation parameters.
 config.trialfun       = 'restingSegmentation';
@@ -88,6 +88,31 @@ for sindex = 1: numel ( files )
         
         fprintf ( 1, '  Processing file %i (%s).\n', findex, basename );
         
+
+        fprintf ( 1, '    Looking for artifact-free epochs in the file.\n' );
+        
+        % Gets the artifact free epochs.
+        trialfun            = str2func ( config.trialfun );
+        
+        fileconfig          = config;
+        fileconfig.dataset  = fileinfo.dataset;
+        fileconfig.header   = fileinfo.header;
+        fileconfig.begtime  = fileinfo.begtime;
+        fileconfig.endtime  = fileinfo.endtime;
+        fileconfig.feedback = 'no';
+        
+        fileconfig.artifact = artinfo.artifact;
+        fileconfig.artifact = rmfield ( fileconfig.artifact, setdiff ( fieldnames ( artinfo.artifact ), config.artifact ) );
+        
+        trialdef            = trialfun ( fileconfig );
+        
+        % If no clean epochs, skips the file.
+        if isempty ( trialdef )
+            fprintf ( 1, '    No clean data. Skipping the file.\n' );
+            continue
+        end
+
+
         fprintf ( 1, '    Reading data from disk.\n' );
         
         % Gets the MEG data.
@@ -108,40 +133,23 @@ for sindex = 1: numel ( files )
         
         fprintf ( 1, '    Filtering the data in the band %0.0f - %0.0f Hz.\n', config.filter.band );
         
-        % Filters and downsamples the data.
+        % Filters the data.
         fir                 = fir1 ( filtorder, config.filter.band / ( wholedata.fsample / 2 ) );
         wholedata           = myft_filtfilt ( fir, 1, wholedata );
-        wholedata           = my_downsample ( wholedata, downrate );
         
         
-        % Resamples and corrects the artifact definitions.
-        artifact            = artinfo.artifact;
-        arttypes            = fieldnames ( artifact );
+        fprintf ( 1, '    Segmenting the data.\n' );
         
-        for aindex = 1: numel ( arttypes )
-            arttype                       = arttypes { aindex };
-            artifact.( arttype ).artifact = ceil ( artifact.( arttype ).artifact / downrate );
-        end
+        % Segments the data according to the trial definition.
+        cfg                 = config;
+        cfg.trl             = trialdef;
+        cfg.feedback        = 'no';
         
-        % Gets the artifact free epochs.
-        trialfun            = str2func ( config.trialfun );
-        
-        fileconfig          = config;
-        fileconfig.dataset  = fileinfo.dataset;
-        fileconfig.header   = wholedata.hdr;
-        fileconfig.begtime  = fileinfo.begtime;
-        fileconfig.endtime  = fileinfo.endtime;
-        fileconfig.feedback = 'no';
-        
-        fileconfig.artifact = artifact;
-        fileconfig.artifact = rmfield ( fileconfig.artifact, setdiff ( fieldnames ( artinfo.artifact ), config.artifact ) );
-        
-        fileconfig.channel.bad = taskinfo.chaninfo.bad;
-        
-        fileconfig.trl      = trialfun ( fileconfig );
-        
-        trialdata           = ft_redefinetrial ( fileconfig, wholedata );
+        trialdata           = ft_redefinetrial ( cfg, wholedata );
         trialdata.trial     = cellfun ( @single, trialdata.trial, 'UniformOutput', false );
+
+        % Downsamples the data.
+        trialdata           = my_downsample ( trialdata, downrate );
         
         
         % Stores the epoch data.
@@ -153,6 +161,7 @@ for sindex = 1: numel ( files )
     
     % Converts the data cell to a matrix.
     datas             = cat ( 3, datas {:} );
+    headers           = cat ( 1, headers {:} );
     
     if isempty ( datas )
         fprintf ( 1, '  Ignoring subject ''%s'' (no clean data found in any file).\n', taskinfo.subject );
@@ -191,7 +200,7 @@ for sindex = 1: numel ( files )
         channel  = config.channel.groups { chindex };
         
         % Gets the labels for this channel group.
-        label    = ft_channelselection ( channel, headers {1}.label );
+        label    = ft_channelselection ( channel, headers (1).label );
         
         % Ignores the selected channels.
         label    = setdiff ( label, config.channel.ignore );
@@ -205,8 +214,8 @@ for sindex = 1: numel ( files )
         fprintf ( 1, '  Working with channel group ''%s''.\n', channel );
         
         % Gets the channels and labels in the right order.
-        chanindx = ismember ( headers {1}.label, label );
-        label    = headers {1}.label ( chanindx );
+        chanindx = ismember ( headers (1).label, label );
+        label    = headers (1).label ( chanindx );
         chandata = datas ( chanindx, :, : );
         
         fprintf ( 1, '    Extracting the SOBI components.\n' );
@@ -225,7 +234,7 @@ for sindex = 1: numel ( files )
     
     % Updates the current step structure.
     compinfo.step     = 'Component extraction';
-    compinfo.date     = datestr ( now );
+    compinfo.date     = char ( datetime );
     compinfo.config   = config;
     compinfo.types    = { 'Clean component' };
     compinfo.SOBI     = SOBI;
