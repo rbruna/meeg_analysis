@@ -38,8 +38,9 @@ else
     info.lname = [];
 end
 if any ( [ pattree.dir.kind ] == 404 )
-    tag = fiff_read_tag ( fid, pattree.dir ( [ pattree.dir.kind ] == 404 ).pos );
-    info.bday = tag.data;
+    % tag = fiff_read_tag ( fid, pattree.dir ( [ pattree.dir.kind ] == 404 ).pos );
+    % info.bday = tag.data;
+    info.bday = [];
 else
     info.bday = [];
 end
