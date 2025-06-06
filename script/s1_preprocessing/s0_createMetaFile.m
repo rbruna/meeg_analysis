@@ -12,12 +12,10 @@ text     = fread ( fid, [ 1 Inf ], '*char' );
 fclose ( fid );
 
 % Adds a new line at the end of the file.
-% text     = strcat ( text, newline );
 text     = cat ( 2, text, newline );
 
 % Replaces the carriage returns by new lines.
 text     = strrep ( text, sprintf ( '\r' ),   newline );
-% text     = strrep ( text, sprintf ( '\n\n' ), newline );
 text     = regexprep ( text, sprintf ( '\n+' ), newline );
 
 % Reads the data in the expected format.
