@@ -127,7 +127,7 @@ for findex = 1: numel ( files )
     
     % Gets the offsets from the file headers with clean trials.
     dindexes            = unique ( trialinfo.trialfile );
-    offsets             = cumsum ( cat ( 1, 0, headers ( dindexes ).nSamples ) );
+    offsets             = cumsum ( cat ( 1, 0, headers.nSamples ) );
     
     % Modifies the trial definitions.
     trialdef            = trialinfo.trialdef;
