@@ -7,6 +7,21 @@ function event = myeep_read_evt ( filename )
 % * v4/eep.h
 
 
+% Checks whether the event file exists.
+if ~exist ( filename, 'file' )
+
+    % If no fle, returns an empty structure.
+    event            = struct ( ...
+        'class', {}, ...
+        'event', {}, ...
+        'chaninfo', {}, ...
+        'description', {}, ...
+        'show_amplitude', {}, ...
+        'show_duration', {} );
+    return
+end
+
+
 % Opens the file to read.
 fid = fopen ( filename, 'rb' );
 
