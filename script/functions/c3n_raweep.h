@@ -177,6 +177,9 @@ int64_t read_channel ( int32_t *data, const uint8_t *byte, int64_t off, uint64_t
         xbit   = bin2uint32 ( byte, off, mbit );
         off   += mbit;
         
+        /* 0 means 16 for exended residuals in methods 1, 2 and 3. */
+        if ( ( xbit == 0 ) && ( method < 8 ) ) xbit = 16;
+        
         /* If xbit is equal to nbit there are no extended residuals. */
         if ( xbit == nbit ) xbit = 0;
     }

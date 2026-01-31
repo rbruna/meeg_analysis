@@ -22,61 +22,44 @@ chorder  = rawdata.channel_order;
 % Gets the raw bit stream.
 rawdata  = rawdata.data;
 
-% Tries to use the myeep code.
-try
-    
-    % Initializes a cell array to contain the epochs.
-    data     = cell ( nepoch, 1 );
-    
-    % Initializes the pointer.
-    offset   = 0;
-    
-    % Goes through each epoch but the last.
-    for eindex = 1: nepoch - 1
-        
-        % Checks the offset for this epoch.
-        if offset ~= 8 * offsets ( eindex )
-            error ( 'Something weird happened...' );
-        end
-        
-        % Reads the current epoch.
-        [ datum, offset ] = myeep_read_block ( rawdata, sepoch, nchan, offset );
-        
-        % Stores the samples.
-        data { eindex } = datum;
-    end
-    
-    
-    % Gets the number of samples of the last epoch.
-    srem     = nsamp - sepoch * ( nepoch - 1 );
-    
-    % Reads the last block.
-    datum   = myeep_read_block ( rawdata, srem, nchan, offset );
-    
-    % Stores the samples.
-    data { end } = datum;
-    
-    
-    % Concatenates all the epochs.
-    data     = cat ( 1, data {:} ).';
-    
-    % Reorders the channels.
-    data     = data ( chorder, : );
-    
-    % Applies the per-channel calibration.
-    data     = chcalib .* double ( data );
-    % data     = chcalib .* single ( data );
+% Initializes a cell array to contain the epochs.
+data     = cell ( nepoch, 1 );
 
-% If error, relies on FieldTrip's eeprobe toolbox.
-catch
-    
-    % Adds the toolsbox to the path.
-    ft_hastoolbox ( 'eeprobe', 1, 1 );
-    
-    % Gets the data.
-    eepdata = read_eep_cnt ( filename, 1, nsamp );
-    data = eepdata.data;
-    
-    % Covnerts the data into I.S. units (V).
-    data = data * 1e-6;
+% Initializes the pointer.
+offset   = 0;
+
+% Goes through each epoch but the last.
+for eindex = 1: nepoch - 1
+
+    % Checks the offset for this epoch.
+    if offset ~= 8 * offsets ( eindex )
+        error ( 'Something weird happened...' );
+    end
+
+    % Reads the current epoch.
+    [ datum, offset ] = myeep_read_block ( rawdata, sepoch, nchan, offset );
+
+    % Stores the samples.
+    data { eindex } = datum;
 end
+
+
+% Gets the number of samples of the last epoch.
+srem     = nsamp - sepoch * ( nepoch - 1 );
+
+% Reads the last block.
+datum   = myeep_read_block ( rawdata, srem, nchan, offset );
+
+% Stores the samples.
+data { end } = datum;
+
+
+% Concatenates all the epochs.
+data     = cat ( 1, data {:} ).';
+
+% Reorders the channels.
+data     = data ( chorder, : );
+
+% Applies the per-channel calibration.
+data     = chcalib .* double ( data );
+% data     = chcalib .* single ( data );
