@@ -76,7 +76,7 @@ label = cellfun ( @label_headpoint, { point.ident }, { point.kind }, 'UniformOut
 point = cat ( 2, point.r )';
 
 % Extracts the landmarks.
-landmark.pnt   = point ( strncmp ( label, 'fid_', 4 ), : );
+landmark.pos   = point ( strncmp ( label, 'fid_', 4 ), : );
 landmark.label = label ( strncmp ( label, 'fid_', 4 ) )';
 
 % Removes the landmarks from the head points.
@@ -97,7 +97,7 @@ switch coordsys
 end
 
 % Constructs the output structure.
-headshape.pnt      = point;
+headshape.pos      = point;
 headshape.fid      = landmark;
 headshape.label    = label;
 headshape.coordsys = coordsys;
