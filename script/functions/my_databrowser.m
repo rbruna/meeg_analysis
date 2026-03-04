@@ -1631,10 +1631,10 @@ offset     = round ( opt.curdata.time {1} (1) * opt.fsample );
 % Gets the list of events.
 event      = opt.event;
 eventindex = [ event.sample ] >= begsample &  [ event.sample ] <= endsample;
-event      = event( eventindex );
+event      = event ( eventindex );
 
 % Gets the current events type and value.
-eventtime  = [ event.sample ]' - single ( begsample ) + offset;
+eventtime  = single ( [ event.sample ]' ) - single ( begsample ) + offset;
 eventtime  = eventtime / opt.fsample;
 eventtype  = { event.type }';
 eventvalue = { event.value }';
