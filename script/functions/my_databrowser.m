@@ -331,7 +331,7 @@ end
 % Determines if the data is continuous or epoched.
 if hasdata
     if isempty ( cfg.continuous )
-        if numel ( data.trial ) == 1 && ~ft_datatype ( data, 'timelock' )
+        if isscalar ( data.trial ) && ~ft_datatype ( data, 'timelock' )
             cfg.continuous = 'yes';
         else
             cfg.continuous = 'no';
@@ -2010,8 +2010,8 @@ end
 
 % Sets the global color limits, if requested.
 if strcmp ( cfg.compscale, 'global' )
-    zmin (:) = nanmin ( zmin );
-    zmax (:) = nanmax ( zmax );
+    zmin (:) = min ( zmin, [], 'omitnan' );
+    zmax (:) = max ( zmax, [], 'omitnan' );
 end
 
 
@@ -2047,7 +2047,7 @@ warning ( oldwarn )
 
 % Sets the x axis limits.
 xlim ( ha, [ -3 1 ] ./ numel ( chanindx ) )
-caxis ( ha, [ 0 1 ] )
+clim ( ha, [ 0 1 ] )
 end
 
 
@@ -2655,7 +2655,7 @@ function [dat, label, time, cfg] = preproc(dat, label, time, cfg, begpadding, en
 % * preproc by  Robert Oostenveld
 
 % compute fsample
-fsample = 1./nanmean(diff(time));
+fsample = 1 ./ mean ( diff ( time ), 'omitnan' );
 
 if nargin<5 || isempty(begpadding)
   begpadding = 0;
