@@ -17,6 +17,7 @@ FIFF.FIFFV_ROLE_NEXT_FILE = 2;
 % Reads the FIFF header and measurement information.
 [ fid,  tree ] = fiff_open ( filename );
 [ info, meas ] = fiff_read_meas_info ( fid, tree );
+fclose ( fid );
 
 % Checks the file for raw data.
 if ~isempty ( fiff_dir_tree_find ( meas, FIFF.FIFFB_RAW_DATA ) )
@@ -56,6 +57,9 @@ reference = fiff_dir_tree_find ( meas, FIFF.FIFFB_REF );
 
 % If part of a sequence, tries to load all the files.
 if ~isempty ( reference ) && ~info.maxST
+
+    % Opens the file to read.
+    fid = fopen ( filename, 'rb', 'ieee-be' );
     
     % Gets the current file number.
     for rindex = 1: numel ( reference )
@@ -67,11 +71,24 @@ if ~isempty ( reference ) && ~info.maxST
             case FIFF.FIFFV_ROLE_NEXT_FILE, seq.next = tag_num.data;
         end
     end
+
+    % Closes the file.
+    fclose ( fid );
+    
+    % Checks the consistency of the sequence descriptors.
     if isfield ( seq, 'prev' ) && isfield ( seq, 'next' ) && seq.prev + 1 ~= seq.next - 1
         error ( 'Incongruent sequence descriptor.' )
     end
-    if isfield ( seq, 'prev' ), seq.this = seq.prev + 1; end
-    if isfield ( seq, 'next' ), seq.this = seq.next - 1; end
+
+
+    % Gets the indentifier for the current file.
+    if isfield ( seq, 'prev' )
+        seq.this = seq.prev + 1;
+    elseif isfield ( seq, 'next' )
+        seq.this = seq.next - 1;
+    else
+        error ( 'Incongruent sequence descriptor.' )
+    end
     
     % Uses the current file number to determine the base FIFF file name.
     if seq.this == 0
@@ -80,13 +97,18 @@ if ~isempty ( reference ) && ~info.maxST
         basename   = regexprep ( filename, sprintf ( '-%i.fif$', seq.this ), '' );
     end
     
-    % Starts for the first file.
+    % Starts by the first file in the sequence.
     nextfile   = sprintf ( '%s.fif', basename );
     nextnum    = 0;
     info.raw   = [];
     
     % Iterates indefinitely.
     while true
+
+        % Checks that the file exists.
+        if ~exist ( nextfile, 'file' )
+            error ( '%s is the %i-th file in a FIFF files sequence, but %s does not exist.', filename, seq.this, nextfile )
+        end
         
         % Reads the raw data information.
         rawinfo      = fiff_setup_read_raw ( nextfile, true );
@@ -113,8 +135,11 @@ if ~isempty ( reference ) && ~info.maxST
                 nextfile = sprintf ( '%s-%i.fif', basename, nextnum );
             end
         end
+
+        % Closes the file.
+        fclose ( fid );
         
-        % If next file, loads its information.
+        % If no more files, exits the loop.
         if ~nextfile, break, end
     end
 end
