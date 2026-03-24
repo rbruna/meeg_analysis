@@ -5,19 +5,53 @@ function header = myfiff_read_header ( filename )
 
 
 % Defines the FIFF constants.
-FIFF = fiff_define_constants;
-FIFF.FIFF_REF_ROLE        = 115;
-FIFF.FIFF_REF_FILE_ID     = 116;
-FIFF.FIFF_REF_FILE_NUM    = 117;
-FIFF.FIFF_REF_FILE_NAME   = 118;
-
-FIFF.FIFFV_ROLE_PREV_FILE = 1;
-FIFF.FIFFV_ROLE_NEXT_FILE = 2;
+FIFF = mymne_define_constants;
 
 % Reads the FIFF header and measurement information.
 [ fid,  tree ] = fiff_open ( filename );
 [ info, meas ] = fiff_read_meas_info ( fid, tree );
+
+% Gets some extra measurement information.
+node = fiff_dir_tree_find ( meas, FIFF.FIFFB_MEAS_INFO );
+
+% Gets the experimenter name.
+dummy = myfiff_find_tag ( fid, node, FIFF.FIFF_EXPERIMENTER );
+if ~isempty ( dummy )
+    info.experimenter = dummy.data;
+end
+
+% Gets the commentary.
+dummy = myfiff_find_tag ( fid, node, FIFF.FIFF_COMMENT );
+if ~isempty ( dummy )
+    info.comment = dummy.data;
+end
+
+% Gets the power line frequency, if available.
+dummy = myfiff_find_tag ( fid, node, FIFF.FIFF_LINE_FREQ );
+if ~isempty ( dummy )
+    info.line_freq = dummy.data;
+end
+
+% Gets the gantry angle, if available.
+dummy = myfiff_find_tag ( fid, node, FIFF.FIFF_GANTRY_ANGLE );
+if ~isempty ( dummy )
+    info.gantry_angle = dummy.data;
+end
+
+% Gets the project information.
+info.project    = myfiff_read_block ( fid, tree, 'project' );
+
+% Gets the patient information.
+info.patient    = myfiff_read_block ( fid, tree, 'patient' );
+
+% Gets the HPI measurement and result, if available.
+info.hpi_meas   = myfiff_read_block ( fid, tree, 'hpi_meas' );
+info.hpi_result = myfiff_read_block ( fid, tree, 'hpi_result' );
+
+
+% Closes the file.
 fclose ( fid );
+
 
 % Checks the file for raw data.
 if ~isempty ( fiff_dir_tree_find ( meas, FIFF.FIFFB_RAW_DATA ) )
