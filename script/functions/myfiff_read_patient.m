@@ -50,3 +50,7 @@ if any ( [ pattree.dir.kind ] == 405 )
 else
     info.sex = [];
 end
+
+
+% Closes the file.
+fclose ( fid );
