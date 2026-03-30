@@ -226,11 +226,11 @@ elseif datatype == 3
 end
 
 
-% Builds the FieldTrip header.
+% Builds the FieldTrip header (using doubles to avoid issues).
 header.orig        = info;
 header.label       = info.ch_names (:);
-header.Fs          = info.sfreq;
-header.nChans      = info.nchan;
-header.nSamples    = nSamples;
-header.nSamplesPre = nSamplesPre;
-header.nTrials     = nTrials;
+header.Fs          = double ( info.sfreq );
+header.nChans      = double ( info.nchan );
+header.nSamples    = double ( nSamples );
+header.nSamplesPre = double ( nSamplesPre );
+header.nTrials     = double ( nTrials );
