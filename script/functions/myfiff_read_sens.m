@@ -35,7 +35,7 @@ end
 megchan = info.chs ( cat ( 2, info.chs.kind ) == 1 );
 
 if ~numel ( megchan )
-    grad = [];
+    grad = my_mkdum ( 'grad' );
 else
     
     % Transforms the channels to Neuromag coordinates.
@@ -115,7 +115,7 @@ end
 eegchan = info.chs ( cat ( 2, info.chs.kind ) == 2 );
 
 if ~numel ( eegchan )
-    elec = [];
+    elec = my_mkdum ( 'elec' );
 else
     
     % Transforms the channels to Neuromag coordinates.
