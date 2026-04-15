@@ -375,7 +375,7 @@ for sindex = 1: numel ( files )
         
         % Updates the current step structure.
         artinfo.step    = 'Post-IC removal muscular artifact revision';
-        artinfo.date    = datestr ( now );
+        artinfo.date    = char ( datetime );
         
         % Adds the current step to the file history.
         current         = rmfield ( artinfo, 'history' );

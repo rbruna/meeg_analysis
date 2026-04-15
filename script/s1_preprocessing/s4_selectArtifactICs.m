@@ -445,7 +445,7 @@ for sindex = 1: numel ( files )
     
     % Updates the current step structure.
     compinfo.step        = 'Component revision';
-    compinfo.date        = datestr ( now );
+    compinfo.date        = char ( datetime );
     compinfo.config      = config;
     compinfo.types       = config.comptypes;
     compinfo.SOBI        = SOBI;

@@ -256,7 +256,7 @@ for sindex = 1: numel ( subjects )
                 % Defines the current step structure.
                 artinfo              = [];
                 artinfo.step         = 'Automatic artifact detection';
-                artinfo.date         = datestr ( now );
+                artinfo.date         = char ( datetime );
                 artinfo.config       = config;
                 artinfo.artifact     = artifact;
                 artinfo.history      = {};

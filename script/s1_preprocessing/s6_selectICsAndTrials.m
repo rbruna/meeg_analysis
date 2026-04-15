@@ -518,12 +518,12 @@ end
 MEGtrials = squeeze ( mean ( MEGclean, 1 ) );
 
 % Averages along trials (IC data) or channels (channels data).
-ICclean   = nanmean ( ICclean, 3 );
-MEGclean  = nanmean ( mean ( MEGclean, 1 ), 3 );
-MEGorig   = nanmean ( mean ( MEGorig,  1 ), 3 );
-EOGfdata  = nanmean ( mean ( EOGfdata, 1 ), 3 );
-EKGfdata  = nanmean ( mean ( EKGfdata, 1 ), 3 );
-EMGdata   = nanmean ( mean ( EMGdata,  1 ), 3 );
+ICclean   = mean ( ICclean, 3, 'omitnan' );
+MEGclean  = mean ( mean ( MEGclean, 1 ), 3, 'omitnan' );
+MEGorig   = mean ( mean ( MEGorig,  1 ), 3, 'omitnan' );
+EOGfdata  = mean ( mean ( EOGfdata, 1 ), 3, 'omitnan' );
+EKGfdata  = mean ( mean ( EKGfdata, 1 ), 3, 'omitnan' );
+EMGdata   = mean ( mean ( EMGdata,  1 ), 3, 'omitnan' );
 
 % Gets the residue.
 residue   = MEGorig - MEGclean;
@@ -723,13 +723,13 @@ else
 end
 
 % Averages along trials (ICs) or channels (trials).
-ICorig   = squeeze ( nanmean ( ICorig,   3 ) );
-ICclean  = squeeze ( nanmean ( ICclean,  3 ) );
-MEGorig  = squeeze ( nanmean ( MEGorig,  1 ) );
-MEGclean = squeeze ( nanmean ( MEGclean, 1 ) );
-EOGfdata = squeeze ( nanmean ( EOGfdata, 3 ) );
-EKGfdata = squeeze ( nanmean ( EKGfdata, 3 ) );
-EMGdata  = squeeze ( nanmean ( EMGdata,  1 ) );
+ICorig   = squeeze ( mean ( ICorig,   3, 'omitnan' ) );
+ICclean  = squeeze ( mean ( ICclean,  3, 'omitnan' ) );
+MEGorig  = squeeze ( mean ( MEGorig,  1, 'omitnan' ) );
+MEGclean = squeeze ( mean ( MEGclean, 1, 'omitnan' ) );
+EOGfdata = squeeze ( mean ( EOGfdata, 3, 'omitnan' ) );
+EKGfdata = squeeze ( mean ( EKGfdata, 3, 'omitnan' ) );
+EMGdata  = squeeze ( mean ( EMGdata,  1, 'omitnan' ) );
 
 % Gets the maximum of each data group.
 ICmax    = 1.1 * max ( abs ( ICorig   ) ) + realmin ( 'single' );
@@ -883,7 +883,7 @@ cleaninfo.comp. types  = handles.config. comptypes;
 cleaninfo.comp. type   = handles.current.comptype;
 
 % Stores the date.
-updated                = datestr ( now );
+updated                = char ( datetime );
 
 % Saves the new data.
 taskdata.cleaninfo     = cleaninfo;
