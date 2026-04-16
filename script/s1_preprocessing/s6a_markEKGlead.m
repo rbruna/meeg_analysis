@@ -32,27 +32,20 @@ for findex = 1: numel ( files )
     
     % Gets the file names.
     basename            = files ( findex ).name;
-    datafile            = sprintf ( '%s%s', config.path.sketch, basename );
+    filename            = sprintf ( '%s%s', config.path.sketch, basename );
     
     % Loads the data.
-    sketchdata          = load ( datafile, '-regexp', '^(?!erfdata|freqdata$).' );
-    
-    
-    % Gets the message name of the subject-task-stage set.
-    msgtext   = sprintf ( 'subject ''%s'', task ''%s''', sketchdata.subject, sketchdata.task );
-    if ~isempty ( sketchdata.stage )
-        msgtext   = sprintf ( '%s, stage ''%s''', msgtext, sketchdata.stage );
-    end
-    msgtext   = sprintf ( '%s, channel group ''%s''', msgtext, sketchdata.channel );
+    sketchdata          = load ( filename, '-regexp', '^(?!erfdata|freqdata$).' );
     
     % Looks for EKG components.
     if ~any ( sketchdata.cleaninfo.comp.type == config.deEKG.comptype )
-        fprintf ( 1, 'Ignoring %s (no EKG components).\n', msgtext );
+        fprintf ( 1, 'Ignoring %s (no EKG components).\n', my_meta2str ( sketchdata, 'text' ) );
         continue
     end
     
-    fprintf ( 1, 'Cleaning data for %s.\n', msgtext );
+    fprintf ( 1, 'Working with for %s.\n', my_meta2str ( sketchdata, 'text' ) );
     
+
     % Gets the data and component information.
     fileinfo            = sketchdata.fileinfo;
     trialinfo           = sketchdata.trialinfo;
@@ -203,5 +196,5 @@ for findex = 1: numel ( files )
     cleaninfo.EKGlead = EKGlead;
     
     % Saves the data.
-    save ( '-v6', datafile, '-append', 'cleaninfo' );
+    save ( '-v6', filename, '-append', 'cleaninfo' );
 end

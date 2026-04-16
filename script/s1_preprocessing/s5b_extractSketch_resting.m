@@ -48,15 +48,9 @@ for sindex = 1: numel ( files )
     % Loads the independent component definition.
     taskinfo            = load ( filename );
     
-    % Gets the message name of the subject-task-stage set.
-    msgtext   = sprintf ( 'subject ''%s'', task ''%s''', taskinfo.subject, taskinfo.task );
-    if ~isempty ( taskinfo.stage )
-        msgtext   = sprintf ( '%s, stage ''%s''', msgtext, taskinfo.stage );
-    end
-    
     % Checks that the selected channel group is present in the SOBI data.
     if ~any ( ismember ( config.channel.groups, fieldnames ( taskinfo.compinfo.SOBI ) ) )
-        fprintf ( 1, 'Ignoring %s (no SOBI information for the selected channel groups).\n', msgtext );
+        fprintf ( 1, 'Ignoring %s (no SOBI information for the selected channel groups).\n', my_meta2str ( taskinfo, 'text' ) );
         continue
     end
     
@@ -66,11 +60,12 @@ for sindex = 1: numel ( files )
         outnames { findex } = sprintf ( '%s%s_%s_%s.mat', config.path.sketch, taskinfo.subject, taskinfo.task, channel );
     end
     if all ( cellfun ( @(f) exist ( f, 'file' ) ~= 0, outnames ) ) && ~config.overwrite
-        fprintf ( 1, 'Ignoring %s (already calculated).\n', msgtext );
+        fprintf ( 1, 'Ignoring %s (already calculated).\n', my_meta2str ( taskinfo, 'text' ) );
         continue
     end
     
-    fprintf ( 1, 'Working on %s.\n', msgtext );
+    fprintf ( 1, 'Working with %s.\n', my_meta2str ( taskinfo, 'text' ) );
+
     
     % Gets the files length as a vector.
     headers             = [ taskinfo.fileinfo.header ];
@@ -271,58 +266,59 @@ for sindex = 1: numel ( files )
     
     % Goes through each channel group.
     for chindex = 1: numel ( config.channel.groups )
+
+        % Initializes the channel group information.
+        sketchdata           = [];
+        sketchdata.subject   = taskinfo.subject;
+        sketchdata.task      = taskinfo.task;
+        sketchdata.stage     = taskinfo.stage;
+        sketchdata.channel   = config.channel.groups { chindex };
+        sketchdata.fileinfo  = taskinfo.fileinfo;
+        sketchdata.chaninfo  = taskinfo.chaninfo;
+        sketchdata.artinfo   = taskinfo.artinfo;
         
-        channel             = config.channel.groups { chindex };
-        outname             = sprintf ( '%s%s_%s%s_%s.mat', config.path.sketch, taskinfo.subject, taskinfo.task, taskinfo.stage, channel );
+        filename             = sprintf ( '%s%s.mat', config.path.sketch, my_meta2str ( sketchdata ) );
         
-        if exist ( outname, 'file' ) && ~config.overwrite
+        if exist ( filename, 'file' ) && ~config.overwrite
             fprintf ( 1, '  Ignoring channel group ''%s'' (already calculated).\n', channel );
             continue
         end
         
-        if ~ismember ( channel, fieldnames ( taskinfo.compinfo.SOBI ) )
+        if ~ismember ( sketchdata.channel, fieldnames ( taskinfo.compinfo.SOBI ) )
             fprintf ( 1, '  Ignoring channel group ''%s'' (no SOBI information).\n', channel );
             continue
         end
         
-        fprintf ( 1, '  Saving channel group ''%s''.\n', channel );
+        fprintf ( 1, '  Saving channel group ''%s''.\n', sketchdata.channel );
         
         % Keeps only the selected channel group data.
-        cfg                   = [];
-        cfg.channel           = cat ( 2, { channel }, { 'EOG' 'ECG' 'EMG' } );
-        cfg.feedback          = 'no';
+        cfg                  = [];
+        cfg.channel          = cat ( 2, { sketchdata.channel }, { 'EOG' 'ECG' 'EMG' } );
+        cfg.feedback         = 'no';
         
-        grouperf              = ft_selectdata ( cfg, erfdata   );
-        groupfreq             = ft_selectdata ( cfg, freqdata  );
+        grouperf             = ft_selectdata ( cfg, erfdata   );
+        groupfreq            = ft_selectdata ( cfg, freqdata  );
         
         % Removes the 'cfg' field.
-        grouperf              = rmfield ( grouperf,   'cfg' );
-        groupfreq             = rmfield ( groupfreq,  'cfg' );
+        grouperf             = rmfield ( grouperf,   'cfg' );
+        groupfreq            = rmfield ( groupfreq,  'cfg' );
         
         % Keeps only the selected channel group SOBI information.
-        compinfo              = taskinfo.compinfo;
-        compinfo.SOBI         = taskinfo.compinfo.SOBI.( channel );
+        compinfo             = taskinfo.compinfo;
+        compinfo.SOBI        = taskinfo.compinfo.SOBI.( sketchdata.channel );
         
         % Adds the clean components to the information structure.
-        cleaninfo.comp.types  = compinfo.types;
-        cleaninfo.comp.type   = compinfo.SOBI.type;
+        cleaninfo.comp.types = compinfo.types;
+        cleaninfo.comp.type  = compinfo.SOBI.type;
         
         % Fills the group information.
-        groupinfo             = [];
-        groupinfo.subject     = taskinfo.subject;
-        groupinfo.task        = taskinfo.task;
-        groupinfo.stage       = taskinfo.stage;
-        groupinfo.channel     = channel;
-        groupinfo.fileinfo    = taskinfo.fileinfo;
-        groupinfo.chaninfo    = taskinfo.chaninfo;
-        groupinfo.artinfo     = taskinfo.artinfo;
-        groupinfo.compinfo    = compinfo;
-        groupinfo.trialinfo   = trialinfo;
-        groupinfo.erfdata     = grouperf;
-        groupinfo.freqdata    = groupfreq;
-        groupinfo.cleaninfo   = cleaninfo;
+        sketchdata.compinfo  = compinfo;
+        sketchdata.trialinfo = trialinfo;
+        sketchdata.erfdata   = grouperf;
+        sketchdata.freqdata  = groupfreq;
+        sketchdata.cleaninfo = cleaninfo;
         
         % Saves the current group epoch data.
-        save ( '-v6', outname, '-struct', 'groupinfo' );
+        save ( '-v6', filename, '-struct', 'sketchdata' );
     end
 end

@@ -51,25 +51,18 @@ for findex = 1: numel ( files )
     
     % Gets the file names.
     basename            = files ( findex ).name;
-    datafile            = sprintf ( '%s%s', config.path.sketch, basename );
-    cleanfile           = sprintf ( '%s%s', config.path.segs,   basename );
+    sketchfile          = sprintf ( '%s%s', config.path.sketch, basename );
+    epochfile           = sprintf ( '%s%s', config.path.segs,   basename );
     
     % Loads the data.
-    sketchdata          = load ( datafile, '-regexp', '^(?!erfdata|freqdata$).' );
+    sketchdata          = load ( sketchfile, '-regexp', '^(?!erfdata|freqdata$).' );
     
-    % Gets the message name of the subject-task-stage set.
-    msgtext   = sprintf ( 'subject ''%s'', task ''%s''', sketchdata.subject, sketchdata.task );
-    if ~isempty ( sketchdata.stage )
-        msgtext   = sprintf ( '%s, stage ''%s''', msgtext, sketchdata.stage );
-    end
-    msgtext   = sprintf ( '%s, channel group ''%s''', msgtext, sketchdata.channel );
-    
-    if exist ( cleanfile, 'file' ) && ~config.overwrite
-        fprintf ( 1, 'Ignoring %s (Already calculated).\n', msgtext );
+    if exist ( epochfile, 'file' ) && ~config.overwrite
+        fprintf ( 1, 'Ignoring %s (Already calculated).\n', my_meta2str ( sketchdata, 'text' ) );
         continue
     end
     
-    fprintf ( 1, 'Cleaning data for %s.\n', msgtext );
+    fprintf ( 1, 'Working with %s.\n', my_meta2str ( sketchdata, 'text' ) );
     
     
     % Gets the data and component information.

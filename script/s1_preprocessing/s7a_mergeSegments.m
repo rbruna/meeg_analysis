@@ -65,32 +65,38 @@ for sindex = 1:numel ( subjects )
             % Gets the current stage.
             stage     = stages { stindex };
             
-            % Gets the message name of the subject-task-stage set.
-            msgtext   = sprintf ( 'subject ''%s'', task ''%s''', subject, task );
-            if ~isempty ( stage )
-                msgtext   = sprintf ( '%s, stage ''%s''', msgtext, stage );
-            end
+            % Lists the channels for this subject, session, and task.
+            info      = infos ( strcmp ( { infos.subject }, subject ) & strcmp ( { infos.task }, task ) & strcmp ( { infos.stage }, stage ) );
+            channels  = strjoin ( { info.channel }, '+' );
+
+            % Initializes the merged epoch information.
+            epochdata           = [];
+            epochdata.subject   = subject;
+            epochdata.task      = task;
+            epochdata.stage     = stage;
+            epochdata.channel   = channels;
+
             
             % Lists the channels.
             info      = infos ( strcmp ( { infos.subject }, subject ) & strcmp ( { infos.task }, task ) & strcmp ( { infos.stage }, stage ) );
             channels  = strjoin ( { info.channel }, '+' );
             
-            if exist ( sprintf ( '%s%s_%s%s_%s.mat', config.path.out, subject, task, stage, channels ), 'file' ) && ~config.overwrite
-                fprintf ( 1, 'Ignoring %s (already processed).\n', msgtext );
+            if exist ( sprintf ( '%s%s.mat', config.path.out, my_meta2str ( epochdata ) ), 'file' ) && ~config.overwrite
+                fprintf ( 1, 'Ignoring %s (already processed).\n', my_meta2str ( epochdata, 'text' ) );
                 continue
             end
             
             % Lists the files for the current subject and task.
-            files = dir ( sprintf ( '%s%s_%s%s_%s', config.path.in, subject, task, stage, config.path.patt ) );
+            files = dir ( sprintf ( '%s%s_%s', config.path.in, my_meta2str ( rmfield ( epochdata, 'channel' ) ), config.path.patt ) );
             
             if ~numel ( files )
-                fprintf ( 1, 'Ignoring %s (no files found).\n', msgtext );
+                fprintf ( 1, 'Ignoring %s (no files found).\n', my_meta2str ( epochdata, 'text' ) );
                 continue
             end
             
+            fprintf ( 1, 'Working with %s.\n', my_meta2str ( epochdata, 'text' ) );
             
-            fprintf ( 1, 'Working with %s.\n', msgtext );
-            
+
             % Reserves memory for the files.
             epochdatas = cell ( size ( files ) );
             
@@ -116,12 +122,7 @@ for sindex = 1:numel ( subjects )
             epochdatas = cat ( 1, epochdatas {:} );
             
             
-            % Gets the global information.
-            epochdata           = [];
-            epochdata.subject   = subject;
-            epochdata.task      = task;
-            epochdata.stage     = stage;
-            epochdata.channel   = channels;
+            % Adds the global information.
             epochdata.fileinfo  = epochdatas (1).fileinfo;
             epochdata.chaninfo  = epochdatas (1).chaninfo;
             epochdata.artinfo   = epochdatas (1).artinfo;
@@ -218,7 +219,7 @@ for sindex = 1:numel ( subjects )
             epochdata.trialinfo = trialinfo;
             epochdata.trialdata = trialdata;
             
-            myft_save ( sprintf ( '%s%s_%s%s_%s', config.path.out, epochdata.subject, epochdata.task, epochdata.stage, epochdata.channel ), epochdata );
+            myft_save ( sprintf ( '%s%s.mat', config.path.out, my_meta2str ( epochdata ) ), epochdata );
         end
     end
 end

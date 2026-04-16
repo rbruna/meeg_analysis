@@ -843,13 +843,9 @@ cleanICs    = sum ( handles.current.comptype  == 0 );
 cleantrials = sum ( handles.current.trialtype == 0 );
 
 % Updates the information text.
-if ~isempty ( stage )
-    handles.current.info {1} = sprintf ( 'Subject ''%s'', task ''%s'', stage ''%s'', channel group ''%s'' (file %i of a total of %i).', subject, task, stage, channel, index, files );
-else
-    handles.current.info {1} = sprintf ( 'Subject ''%s'', task ''%s'', channel group ''%s'' (file %i of a total of %i).', subject, task, channel, index, files );
-end
+handles.current.info {1} = sprintf ( 'Working with %s (file %i of a total of %i).', my_meta2str ( handles.current, 'text' ), index, files );
 handles.current.info {2} = sprintf ( 'Full route to file: %s%s.', folder, filename );
-handles.current.info {3} = sprintf ( 'Last time saved: %s.', updated );
+handles.current.info {3} = sprintf ( 'Last time saved: %s.', handles.current.updated );
 handles.current.info {4} = sprintf ( '%.0f of %.0f trials. %.0f of %.0f independent components.', cleantrials, trials, cleanICs, ICs );
 
 set ( handles.textInfoA, 'String', handles.current.info {1} );

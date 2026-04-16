@@ -44,14 +44,9 @@ for sindex = 1: numel ( files )
     % Loads the current task information.
     taskinfo            = load ( filename );
     
-    % Gets the message name of the subject-task-stage set.
-    msgtext   = sprintf ( 'subject ''%s'', task ''%s''', taskinfo.subject, taskinfo.task );
-    if ~isempty ( taskinfo.stage )
-        msgtext   = sprintf ( '%s, stage ''%s''', msgtext, taskinfo.stage );
-    end
+    fprintf ( 1, 'Working with %s.\n', my_meta2str ( taskinfo, 'text' ) );
     
-    fprintf ( 1, 'Working on %s.\n', msgtext );
-    
+
     % Gets the files length as a vector.
     headers             = [ taskinfo.fileinfo.header ];
     samples             = [ headers.nSamples ];

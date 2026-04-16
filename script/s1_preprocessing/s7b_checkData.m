@@ -27,9 +27,9 @@ for findex = 1: numel ( files )
     filename    = files ( findex ).name;
     
     % Preloads the data.
-    epochdata   = load ( sprintf ( '%s%s', config.path.segs, filename ), 'subject', 'task', 'channel' );
+    epochdata   = load ( sprintf ( '%s%s', config.path.segs, filename ), '-regexp', '^(?!trialdata$).' );
     
-    fprintf ( 1, 'Checking data for subject ''%s'', task ''%s'', channel group ''%s''.\n', epochdata.subject, epochdata.task, epochdata.channel );
+    fprintf ( 1, 'Checking data for %s.\n', my_meta2str ( epochdata, 'text' ) );
     
     
     fprintf ( 1, '  Loading the data.\n' );

@@ -3,11 +3,11 @@ clear
 close all
 
 % Sets the paths.
-config.path.trl       = '../../meta/trl/';
+config.path.trl       = '../../meta/trl_/';
 config.path.patt      = '*.mat';
 
 % Action when the task have already been processed.
-config.overwrite      = true;
+config.overwrite      = false;
 
 % Sets the segmentation parameters.
 config.trialfun       = 'restingSegmentation';
@@ -45,21 +45,16 @@ for sindex = 1: numel ( files )
     % Loads the current task information.
     taskinfo          = load ( filename );
     
-    % Gets the message name of the subject-task-stage set.
-    msgtext   = sprintf ( 'subject ''%s'', task ''%s''', taskinfo.subject, taskinfo.task );
-    if ~isempty ( taskinfo.stage )
-        msgtext   = sprintf ( '%s, stage ''%s''', msgtext, taskinfo.stage );
-    end
-    
     % Checks if the task has already been processed.
     if isfield ( taskinfo, 'compinfo' ) && ~config.overwrite
         
-        fprintf ( 1, 'Ignoring %s (already calculated).\n', msgtext );
+        fprintf ( 1, 'Ignoring %s (already calculated).\n', my_meta2str ( taskinfo, 'text' ) );
         continue
     end
     
-    fprintf ( 1, 'Working on %s.\n', msgtext );
+    fprintf ( 1, 'Working with %s.\n', my_meta2str ( taskinfo, 'text' ) );
     
+
     % Reserves memory for the data segments.
     datas             = cell ( numel ( taskinfo.fileinfo ), 1 );
     headers           = cell ( numel ( taskinfo.fileinfo ), 1 );

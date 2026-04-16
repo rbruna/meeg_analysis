@@ -4,7 +4,7 @@ close all
 
 % Sets the paths.
 config.path.raw       = '../../data/tsss/';
-config.path.out       = '../../meta/trl/';
+config.path.out       = '../../meta/trl_/';
 
 % Action when the task has already been processed.
 config.overwrite      = false;
@@ -27,7 +27,7 @@ config.physio.EMG     = {};
 % 
 % A regular expression can be provided to group files by subject and task.
 
-config.path.files     = '../../meta/times.mat';
+config.path.files     = '../../meta/eeg/times.mat';
 
 % Sets the regular expression to match {subject}, {task} and {stage}.
 config.path.regexp    = '^(S[0-9]{2})_(task)().fif$';
@@ -133,8 +133,6 @@ for sindex = 1: numel ( subjects )
     % Gets the list of files for the current subject.
     sfiles  = files ( strcmp ( { files.subject }, subject ) );
     
-    fprintf ( 1, 'Working on subject ''%s''.\n', subject );
-    
     
     % Goes through each task for the current subject.
     for tindex = 1: numel ( tasks )
@@ -154,23 +152,24 @@ for sindex = 1: numel ( subjects )
             % If no files, skips this task-stage pair for the subject.
             if ~numel ( tfiles ), continue, end
             
+
+            % Initializes the task information structure.
+            taskinfo         = [];
+            taskinfo.subject = subject;
+            taskinfo.task    = task;
+            taskinfo.stage   = stage;
+
+            % Defines the output file name.
+            filename  = sprintf ( '%s%s.mat', config.path.out, my_meta2str ( taskinfo ) );
             
-            % Sets the output file name.
-            outname   = sprintf ( '%s%s_%s%s.mat', config.path.out, subject, task, stage );
             
-            % Gets the message name of the subject-task-stage set.
-            msgtext   = sprintf ( 'task ''%s''', task );
-            if ~isempty ( stage )
-                msgtext   = sprintf ( '%s, stage ''%s''', msgtext, stage );
-            end
-            
-            % Checks if the task has already been preprocessed.
-            if exist ( outname, 'file' ) && ~config.overwrite
-                fprintf ( 1, '  Ignoring %s (already calculated).\n', msgtext );
+            % Checks whether the task has already been preprocessed.
+            if exist ( filename, 'file' ) && ~config.overwrite
+                fprintf ( 1, 'Ignoring %s (already calculated).\n', my_meta2str ( taskinfo, 'text' ) );
                 continue
             end
             
-            fprintf ( 1, '  Working on %s.\n', msgtext );
+            fprintf ( 1, 'Working with %s.\n', my_meta2str ( taskinfo, 'text' ) );
             
             % Reserves memory for the output structures.
             fileinfos = struct ( 'dataset', {}, 'subject', {}, 'task', {}, 'stage', {}, 'index', {}, 'begtime', {}, 'endtime', {}, 'header', {}, 'headshape', {}, 'event', {} );
@@ -184,23 +183,23 @@ for sindex = 1: numel ( subjects )
             for findex = 1: numel ( tfiles )
                 
                 % Gets the file name.
-                filename             = tfiles ( findex ).dataset;
-                dataset              = sprintf ( '%s%s', config.path.raw, filename );
-                begtime              = tfiles ( findex ).begtime;
-                endtime              = tfiles ( findex ).endtime;
+                tfile     = tfiles ( findex );
+                dataset   = sprintf ( '%s%s', config.path.raw, tfile.dataset );
+                begtime   = tfile.begtime;
+                endtime   = tfile.endtime;
                 
                 % Checks the existence of the selected file.
                 if ~exist ( dataset, 'file' )
-                    fprintf ( 1, '    Ignoring file %i (file %s not found).\n', findex, filename );
+                    fprintf ( 1, '  Ignoring file %i (file %s not found).\n', findex, tfile.dataset );
                     continue
                 end
                 
-                fprintf ( 1, '    Processing file %i (%s).\n', findex, filename );
+                fprintf ( 1, '  Processing file %i (%s).\n', findex, tfile.dataset );
                 
                 % Gets the dataset header, headshape and events.
-                header               = my_read_header    ( dataset );
-                event                = my_read_event     ( dataset, header );
-                headshape            = my_read_headshape ( dataset, header );
+                header    = my_read_header    ( dataset );
+                event     = my_read_event     ( dataset, header );
+                headshape = my_read_headshape ( dataset, header );
                 
                 % Removes the data from the header.
                 if isfield ( header.orig, 'data' )
@@ -208,18 +207,18 @@ for sindex = 1: numel ( subjects )
                 end
                 
                 % Modifies, if required, the physiological data labels.
-                oldlabel             = ft_channelselection ( config.physio.EOG, header.label );
-                oldindex             = ismember ( header.label, oldlabel );
+                oldlabel  = ft_channelselection ( config.physio.EOG, header.label );
+                oldindex  = ismember ( header.label, oldlabel );
                 header.label    ( oldindex ) = cellstr ( num2str ( ( 1: numel ( oldlabel ) )', 'EOG%03i' ) );
                 header.chantype ( oldindex ) = { 'eog' };
                 
-                oldlabel             = ft_channelselection ( config.physio.EKG, header.label );
-                oldindex             = ismember ( header.label, oldlabel );
+                oldlabel  = ft_channelselection ( config.physio.EKG, header.label );
+                oldindex  = ismember ( header.label, oldlabel );
                 header.label    ( oldindex ) = cellstr ( num2str ( ( 1: numel ( oldlabel ) )', 'ECG%03i' ) );
                 header.chantype ( oldindex ) = { 'ecg' };
                 
-                oldlabel             = ft_channelselection ( config.physio.EMG, header.label );
-                oldindex             = ismember ( header.label, oldlabel );
+                oldlabel  = ft_channelselection ( config.physio.EMG, header.label );
+                oldindex  = ismember ( header.label, oldlabel );
                 header.label    ( oldindex ) = cellstr ( num2str ( ( 1: numel ( oldlabel ) )', 'EMG%03i' ) );
                 header.chantype ( oldindex ) = { 'emg' };
                 
@@ -230,10 +229,10 @@ for sindex = 1: numel ( subjects )
                 fileconfig.header    = header;
                 fileconfig.begtime   = begtime;
                 fileconfig.endtime   = endtime;
-                fileconfig.fprintoff = 2;
+                fileconfig.fprintoff = 1;
                 
                 % Calls the manual artifact rejection function.
-                artifact             = automaticArtifacts ( fileconfig );
+                artifact  = automaticArtifacts ( fileconfig );
                 
                 
                 % Initializes the file info.
@@ -279,9 +278,9 @@ for sindex = 1: numel ( subjects )
             % If no data for this task, goes to the next one.
             if numel ( fileinfos ) == 0
                 if ~isempty ( stage )
-                    fprintf ( 1, '    Ignoring task ''%s'', stage ''%s'' (no files found).\n', task, stage );
+                    fprintf ( 1, '  Ignoring task ''%s'', stage ''%s'' (no files found).\n', task, stage );
                 else
-                    fprintf ( 1, '    Ignoring task ''%s'' (no files found).\n', task );
+                    fprintf ( 1, '  Ignoring task ''%s'' (no files found).\n', task );
                 end
                 continue
             end
@@ -290,19 +289,14 @@ for sindex = 1: numel ( subjects )
             chaninfo.bad      = {};
             
             
-            fprintf ( 1, '    Saving the task information.\n' );
+            fprintf ( 1, '  Saving the task information.\n' );
             
-            % Sets the task information.
-            taskinfo          = [];
-            taskinfo.subject  = subject;
-            taskinfo.task     = task;
-            taskinfo.stage    = stage;
+            % Saves the task information.
             taskinfo.fileinfo = fileinfos;
             taskinfo.chaninfo = chaninfo;
             taskinfo.artinfo  = artinfos;
             
-            % Saves the output data.
-            save ( '-v6', outname, '-struct', 'taskinfo' );
+            save ( '-v6', filename, '-struct', 'taskinfo' );
         end
     end
 end
