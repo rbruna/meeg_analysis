@@ -20,7 +20,7 @@ function headshape = myfiff_read_headshape ( filename, header )
 
 % Gets the file header, if no provided.
 if nargin < 2
-    header = ft_read_header ( filename );
+    header = myfiff_read_header ( filename );
 end
 
 

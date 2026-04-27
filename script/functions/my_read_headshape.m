@@ -24,7 +24,7 @@ if ft_filetype ( filename, 'neuromag_fif' )
     
     % Reads the file header, if not provided.
     if nargin < 2
-        header = ft_read_header ( filename );
+        header = myfiff_read_header ( filename );
     end
     
     % Generates the head shape.
