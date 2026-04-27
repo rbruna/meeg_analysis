@@ -6,7 +6,7 @@ node = node (1);
 % Looks for the requested kind of data.
 index = find ( [ node.dir.kind ] == target, 1 );
 if index
-    tag = fiff_read_tag ( fid, node.dir ( index ).pos );
+    tag = myfiff_read_tag ( fid, node.dir ( index ).pos );
 else
     tag = [];
 end

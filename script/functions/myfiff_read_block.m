@@ -41,7 +41,7 @@ for bindex = 1: numel ( fiff_blocks )
         % Reads known tags.
         if any ( [ entry.tag.kind ] == kind )
             name = entry.tag ( [ entry.tag.kind ] == kind ).name;
-            tag  = fiff_read_tag ( fid, pos );
+            tag  = myfiff_read_tag ( fid, pos );
             
             if numel ( block ) < bindex || ~isfield ( block ( bindex ), name )
                 block ( bindex ).( name ) = [];
