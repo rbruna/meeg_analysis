@@ -5,9 +5,9 @@ if nargin < 2
     header = mybv_read_header ( filename );
 end
 
-% If no event file (vmrk) returns.
+% If no event file (vmrk) returns an empty events structure.
 if ~isfield ( header.orig, 'MarkerFile' ) || isempty ( header.orig.MarkerFile )
-    events = [];
+    events = my_mkdum ( 'event' );
     return
 end
 
@@ -123,6 +123,9 @@ fclose ( fid );
 
 % Rewrites the events as a structure.
 events = cat ( 1, events {:} );
+
+% If no events, returns an empty events structure.
+if isempty ( events ), events = my_mkdum ( 'event' ); end
 
 % % Only the stimulus and responses are returned here.
 % events = events ( ismember ( { events.type }, { 'Stimulus' 'Response' } ) );
