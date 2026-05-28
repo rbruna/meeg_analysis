@@ -323,7 +323,7 @@ for sindex = 1: numel ( files )
     projector.data.nrow      = 1;
     projector.data.ncol      = sum ( EEG );
     projector.data.row_names = [];
-    projector.data.col_names = trialdata.label ( EEG );
+    projector.data.col_names = cleandata.label ( EEG );
     projector.data.data      = ones ( 1, sum ( EEG ) );
     
     % Displays the MEG data to append or remove artifacts.
