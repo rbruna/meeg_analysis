@@ -3,7 +3,7 @@ clear
 close all
 
 % Sets the paths.
-config.path.trl       = '../../meta/trl_/';
+config.path.trl       = '../../meta/trl/';
 config.path.patt      = '*.mat';
 
 % Action when the task have already been processed.

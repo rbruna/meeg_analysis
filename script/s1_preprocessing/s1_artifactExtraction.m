@@ -4,7 +4,7 @@ close all
 
 % Sets the paths.
 config.path.raw       = '../../data/tsss/';
-config.path.out       = '../../meta/trl_/';
+config.path.out       = '../../meta/trl/';
 
 % Action when the task has already been processed.
 config.overwrite      = false;

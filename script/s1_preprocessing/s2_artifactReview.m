@@ -3,7 +3,7 @@ clear
 close all
 
 % Sets the paths.
-config.path.trl       = '../../meta/trl_/';
+config.path.trl       = '../../meta/trl/';
 config.path.patt      = '*.mat';
 
 % Sets the visualization configuration parameters.
