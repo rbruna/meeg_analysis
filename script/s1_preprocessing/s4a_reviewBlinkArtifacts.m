@@ -93,7 +93,7 @@ for sindex = 1: numel ( files )
         
         % Selects the channels.
         cfg                  = [];
-        cfg.channel          = cat ( 2, config.channel.data, { 'EOG' 'ECG' }, strcat ( '-', config.channel.ignore ) );
+        cfg.channel          = cat ( 2, config.channel.data, { 'EOG' 'ECG' 'EMG' }, strcat ( '-', config.channel.ignore ) );
         cfg.precision        = 'single';
         cfg.feedback         = 'no';
         
