@@ -270,8 +270,8 @@ for sindex = 1: numel ( files )
         % Initializes the channel group information.
         sketchdata           = [];
         sketchdata.subject   = taskinfo.subject;
-        sketchdata.task      = taskinfo.task;
         sketchdata.stage     = taskinfo.stage;
+        sketchdata.task      = taskinfo.task;
         sketchdata.channel   = config.channel.groups { chindex };
         sketchdata.fileinfo  = taskinfo.fileinfo;
         sketchdata.chaninfo  = taskinfo.chaninfo;

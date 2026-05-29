@@ -72,8 +72,8 @@ for sindex = 1:numel ( subjects )
             % Initializes the merged epoch information.
             epochdata           = [];
             epochdata.subject   = subject;
-            epochdata.task      = task;
             epochdata.stage     = stage;
+            epochdata.task      = task;
             epochdata.channel   = channels;
 
             

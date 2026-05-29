@@ -334,8 +334,8 @@ for findex = 1: numel ( files )
     % Generates the output variable.
     epochdata           = [];
     epochdata.subject   = sketchdata.subject;
-    epochdata.task      = sketchdata.task;
     epochdata.stage     = sketchdata.stage;
+    epochdata.task      = sketchdata.task;
     epochdata.channel   = sketchdata.channel;
     epochdata.fileinfo  = sketchdata.fileinfo;
     epochdata.chaninfo  = sketchdata.chaninfo;
