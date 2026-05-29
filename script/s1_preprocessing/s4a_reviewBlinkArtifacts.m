@@ -334,6 +334,7 @@ for sindex = 1: numel ( files )
     cfg.eegscale        = 5e-8;
     cfg.eogscale        = 1e-8;
     cfg.ecgscale        = 1e-8;
+    cfg.emgscale        = 1e-8;
     cfg.ylim            = [ -2 2 ] * 1e-12;
     cfg.plotlabels      = 'yes';
     cfg.viewmode        = 'vertical';
